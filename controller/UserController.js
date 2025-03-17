@@ -1,24 +1,57 @@
 import User from "../models/userModel.js";
+import  { hashPassword,comparePassword } from ' ../helper/authHelper.js';
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const hashedPassword = await hashPassword(password);
+    const user = await new userModel({
+      name,
+      email,
+      password:hashedPassword,
+      phone,
+      address
+    }).save();
 
-    // Check if user already exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    // Create new user
-    const user = await User.create({ name, email, password });
-    
-    if (user) {
-      res.status(201).json({ _id: user._id, email: user.email });
-    } else {
-      res.status(400).json({ message: "Invalid user data" });
-    }
+    res.status(201).send({
+      success: true,
+      message: "User Created Successfully",
+      user,
+    });
   } catch (error) {
+    console.error("Registration error", error);
     res.status(500).json({ message: error.message });
   }
+};
+
+
+export const loginController = async (req,res) => {
+  try {
+    const { email, password } = req.body;
+    if(!email||!!password){
+      return res.status(400).json({message: "Plaese enter both email and password"})
+    }
+
+    const user = await userModel.findOne({email});
+    if(!user){
+      return res.status(404).send({
+        success: false,
+        message: "Invalid password, Please try again!!"
+      })
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "User Login",
+      
+    })
+
+
+  }
+  catch(error) {
+    console.error(error);
+    res.status(500).json({
+      message: error.message
+    });
+  }
+  
 };
