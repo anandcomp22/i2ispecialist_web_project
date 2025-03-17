@@ -1,6 +1,7 @@
 {
   "name": "i2ispecialist_web_project",
   "version": "1.0.0",
+  "type": "module",
   "description": "Clearing the concepts of MERN stack",
   "main": "server.js",
   "scripts": {
